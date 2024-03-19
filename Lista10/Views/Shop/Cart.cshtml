@@ -1,0 +1,77 @@
+﻿@model Tuple<List<Category>, List<Article>, List<Tuple<int, int>>>
+
+<h1>Your Cart</h1>
+<form id="filterForm" asp-controller="Shop" asp-action="SetRole" method="post">
+    <label for="role">Select Role:</label>
+    <select id="role" name="role" onchange="submitForm()">
+        @if (ViewBag.Role == "Customer")
+        {
+            <option value="">Customer</option>
+            <option id="roleValue" value="Seller">Seller</option>
+        }
+        else
+        {
+            <option value="">Seller</option>
+            <option id="roleValue" value="Customer">Customer</option>
+        }
+        }
+    </select>
+    <button type="submit">Submit</button>
+</form>
+@if (Model.Item3.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Article</th>
+                <th>Quantity</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Item3)
+            {
+                var article = Model.Item2.FirstOrDefault(a => a.Id == item.Item1);
+                if (article != null)
+                {
+                    <tr>
+                        <td>@article.Name</td>
+                        <td>@item.Item2</td>
+                        <td>
+                            <form asp-controller="Shop" asp-action="RemoveFromCart" method="post">
+                                <input type="hidden" name="articleId" value="@article.Id" />
+                                <button type="submit">Remove</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form asp-controller="Shop" asp-action="AddToCart" method="post">
+                                <input type="hidden" name="articleId" value="@article.Id" />
+                                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                <button type="submit">+</button>
+                            </form>
+
+                        </td>
+                        <td>
+                            <form asp-controller="Shop" asp-action="DecreaseQuantity" method="post">
+                                <input type="hidden" name="articleId" value="@article.Id" />
+                                <button type="submit">-</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <p>Total items in your cart: @Model.Item3.Sum(t => t.Item2)</p>
+    @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin")){
+    <form asp-controller="Shop" asp-action="Order" method="get">
+        <button type="submit">Złóż zamówienie</button>
+    </form>
+    }
+}
+else
+{
+    <p>Your cart is empty.</p>
+}

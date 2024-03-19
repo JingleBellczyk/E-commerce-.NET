@@ -1,0 +1,79 @@
+﻿@model Tuple<List<Category>, List<Article>, List<Tuple<int, int>>>
+
+<h1>Podsumowanie</h1>
+
+@if (Model.Item3.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Article</th>
+                <th>Image</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Item3)
+            {
+                var article = Model.Item2.FirstOrDefault(a => a.Id == item.Item1);
+                if (article != null)
+                {
+                    <tr>
+                        <td>@article.Name</td>
+                        <td>
+                            @if (article.imagePath == null)
+                            {
+                                    <img src="~/uploads/brak.png" style="max-height: 100px; max-width: 100px"/>
+                                }
+                                else
+                                {
+                                    <img src="~/uploads/@article.imagePath" style="max-height: 100px; max-width: 100px" />
+                                }
+                        </td>
+                        <td>@item.Item2</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <p>Total items @Model.Item3.Sum(t => t.Item2)</p>
+
+    <h2>Personal Information</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-controller="Shop" asp-action="ConfirmOrder" method="post">
+                <div class="form-group">
+                    <label for="FirstName" class="control-label">First Name:</label>
+                    <input type="text" class="form-control" id="FirstName" name="FirstName" required />
+                </div>
+                <div class="form-group">
+                    <label for="LastName" class="control-label">Last Name:</label>
+                    <input type="text" class="form-control" id="LastName" name="LastName" required />
+                </div>
+                <div class="form-group">
+                    <label for="Street" class="control-label">Street:</label>
+                    <input type="text" class="form-control" id="Street" name="Street" required />
+                </div>
+
+                <h2>Payment Method</h2>
+
+                <div class="form-group">
+                    <label for="PaymentMethod" class="control-label">Select Payment Method:</label>
+                    <select id="PaymentMethod" name="PaymentMethod" required>
+                        <option value="BLIK">BLIK</option>
+                        <option value="Przelew">Przelew</option>
+                        <option value="PrzyOdbiorze">Przy odbiorze</option>
+                    </select>
+                </div>
+
+                <button type="submit">Zatwierdź</button>
+            </form>
+        </div>
+    </div>
+
+
+}
+else
+{
+    <p>Your cart is empty.</p>
+}

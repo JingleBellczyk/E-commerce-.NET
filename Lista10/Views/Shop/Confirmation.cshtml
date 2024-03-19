@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Confirmation";
+}
+
+<h1>Potwierdzenie</h1>
+
+@if (ViewBag.OrderDetails != null)
+{
+    <h2>Personal Information</h2>
+    <p><strong>First Name:</strong> @ViewBag.OrderDetails.FirstName</p>
+    <p><strong>Last Name:</strong> @ViewBag.OrderDetails.LastName</p>
+    <p><strong>Street:</strong> @ViewBag.OrderDetails.Street</p>
+
+    <h2>Payment Method</h2>
+    <p><strong>Selected Payment Method:</strong> @ViewBag.OrderDetails.PaymentMethod</p>
+    <form asp-controller="Shop" asp-action="EndOrder" method="post">
+        <button type="submit">Powróć</button>
+    </form>
+}
+else
+{
+    <p>No order details available.</p>
+}
